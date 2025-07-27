@@ -329,3 +329,14 @@ SHOW POOL_VERSION;
 ## 📞 Support
 
 - 📧 Email: prasunroy212@gmail.com
+
+## 🚧 Roadmap & Maintenance Notes
+
+This project is under active development and is being improved step-by-step. Key focus areas include:
+
+- 🔐 Adding stronger security defaults and TLS hardening
+- 📦 Regular patching and base image updates
+- 🧪 Testing with multiple PostgreSQL setups and edge cases
+- 📖 Improving documentation and usage examples
+
+As I continue learning and applying best practices, expect improvements to roll out incrementally. Contributions and feedback are welcome!
