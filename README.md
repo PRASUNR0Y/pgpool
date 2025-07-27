@@ -1,4 +1,4 @@
-# Pgpool-II Docker Image for Lightweight Cloud Load Balancing
+# Pgpool-II Docker Image for PostgreSQL Load Balancing
 
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![PostgreSQL](https://img.shields.io/badge/postgresql-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
