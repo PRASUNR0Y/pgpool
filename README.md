@@ -1,19 +1,27 @@
-# Enhanced Pgpool-II Docker Image
+# Pgpool-II Docker Image for Lightweight Cloud Load Balancing
 
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![PostgreSQL](https://img.shields.io/badge/postgresql-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
-An enhanced Docker image based on `bitnami/pgpool:latest` that provides advanced configuration through environment variables, eliminating the need to mount configuration files for common use cases.
+This Docker image is based on `bitnami/pgpool:latest` and is tailored for a specific use case: providing full pgpool configuration through environment variables to simplify deployment without mounting configuration files. 
+
+It is designed primarily for scenarios where you use cloud-hosted PostgreSQL replicas and want lightweight load balancing in a single VM or serverless Docker environment, enabling quick, zero-config deployments.
+
+## ⚠️ Configuration Files vs. Environment Variables
+
+While configuration files are commonly preferred for large-scale or Kubernetes-based deployments, this image focuses on simpler, cost-effective setups—such as cloud-hosted PostgreSQL with replicas—where lightweight load balancing is needed using Docker in a single VM or serverless environment.
+
+By relying entirely on environment variables, it enables fast deployment without volume mounts or custom templates. This approach works well for SaaS platforms, testing, minimal infrastructure, and also scales efficiently at low operational cost without the complexity of orchestration layers.
 
 ## 🚀 Features
 
-- **🔧 Full Environment Variable Configuration**: Configure pgpool entirely through environment variables
-- **⚖️ Enhanced Backend Node Support**: Support for load balancing weights in backend node configuration
-- **🔄 Backward Compatibility**: Fully compatible with existing Bitnami pgpool environment variables
-- **📦 Ready-to-Deploy**: No configuration files needed for standard deployments
-- **🔐 SSL/TLS Support**: Complete SSL/TLS configuration through environment variables
-- **🏥 Health Check Configuration**: Comprehensive health check settings
-- **📊 Load Balancing**: Advanced load balancing configuration options
+- **🔧 Full Environment Variable Configuration**: Configure pgpool entirely through environment variables  
+- **⚖️ Backend Node Load Balancing Weights**: Support for load balancing weights in backend node configuration  
+- **🔄 Backward Compatibility**: Compatible with existing Bitnami pgpool environment variables  
+- **📦 Ready-to-Deploy**: No configuration files needed for standard deployments  
+- **🔐 SSL/TLS Support**: Full SSL/TLS configuration via environment variables  
+- **🏥 Health Check Configuration**: Comprehensive health check options  
+- **📊 Load Balancing**: Advanced load balancing configuration options  
 
 ## 📋 Quick Start
 
