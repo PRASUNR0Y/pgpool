@@ -1,0 +1,142 @@
+# Simple development/testing setup with custom pgpool
+# This setup uses basic PostgreSQL instances for quick testing
+
+services:
+  # Simple PostgreSQL instances for testing
+  postgres1:
+    image: postgres:15
+    container_name: postgres1
+    environment:
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_USER: testuser
+      POSTGRES_DB: testdb
+    ports:
+      - "15432:5432"
+    networks:
+      - pgpool-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres2:
+    image: postgres:15
+    container_name: postgres2
+    environment:
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_USER: testuser
+      POSTGRES_DB: testdb
+    ports:
+      - "15433:5432"
+    networks:
+      - pgpool-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres3:
+    image: postgres:15
+    container_name: postgres3
+    environment:
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_USER: testuser
+      POSTGRES_DB: testdb
+    ports:
+      - "15434:5432"
+    networks:
+      - pgpool-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Pgpool-II with enhanced environment variable support
+  pgpool:
+    build: .
+    container_name: pgpool
+    ports:
+      - "5432:5432"
+      - "9898:9898"  # PCP port for administration
+    environment:
+      # Enhanced backend configuration with weights
+      # Format: index:hostname:port[:weight]
+      # postgres1 gets weight 1, postgres2 gets weight 2, postgres3 gets weight 1
+      - PGPOOL_BACKEND_NODES=0:postgres1:5432:1,1:postgres2:5432:2,2:postgres3:5432:1
+      
+      # Health check configuration
+      - PGPOOL_HEALTH_CHECK_PERIOD=30
+      - PGPOOL_HEALTH_CHECK_TIMEOUT=10
+      - PGPOOL_HEALTH_CHECK_USER=testuser
+      - PGPOOL_HEALTH_CHECK_PASSWORD=adminpassword
+      - PGPOOL_HEALTH_CHECK_MAX_RETRIES=5
+      - PGPOOL_HEALTH_CHECK_RETRY_DELAY=5
+      - PGPOOL_CONNECT_TIMEOUT=10000
+      
+      # Authentication
+      - PGPOOL_POSTGRES_USERNAME=testuser
+      - PGPOOL_POSTGRES_PASSWORD=adminpassword
+      - PGPOOL_ADMIN_USERNAME=admin
+      - PGPOOL_ADMIN_PASSWORD=adminpass
+      
+      # Connection settings
+      - PGPOOL_LISTEN_ADDRESSES=*
+      - PGPOOL_PORT_NUMBER=5432
+      - PGPOOL_MAX_POOL=15
+      - PGPOOL_CHILD_LIFE_TIME=300
+      - PGPOOL_CONNECTION_LIFE_TIME=0
+      - PGPOOL_CLIENT_IDLE_LIMIT=0
+      
+      # Load balancing configuration
+      - PGPOOL_LOAD_BALANCE_MODE=on
+      - PGPOOL_DISABLE_LOAD_BALANCE_ON_WRITE=transaction
+      - PGPOOL_STATEMENT_LEVEL_LOAD_BALANCE=off
+      
+      # Logging configuration
+      - PGPOOL_LOG_CONNECTIONS=on
+      - PGPOOL_LOG_HOSTNAME=on
+      - PGPOOL_LOG_PER_NODE_STATEMENT=off
+      
+      # Bitnami compatibility
+      - PGPOOL_ENABLE_LDAP=no
+      - PGPOOL_ENABLE_LOAD_BALANCING=yes
+      - PGPOOL_ENABLE_POOL_HBA=yes
+      - PGPOOL_ENABLE_POOL_PASSWD=yes
+      
+    networks:
+      - pgpool-network
+    depends_on:
+      postgres1:
+        condition: service_healthy
+      postgres2:
+        condition: service_healthy
+      postgres3:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Optional: PostgreSQL Admin tool (pgAdmin)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: adminpass
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8080:80"
+    networks:
+      - pgpool-network
+    depends_on:
+      - pgpool
+
+networks:
+  pgpool-network:
+    driver: bridge 
